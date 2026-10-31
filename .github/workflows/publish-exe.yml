@@ -7,11 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - uses: actions/checkout@v4
       - name: Merge staging parts and upload release asset
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           VERSION: ${{ github.event.client_payload.version }}
           ARTIFACT_NAME: ${{ github.event.client_payload.artifact_name }}
           PART_PATHS_JSON: ${{ toJson(github.event.client_payload.exe_storage_parts) }}
@@ -50,7 +52,14 @@ jobs:
             const tag = 'v' + version;
             const { execSync } = await import('node:child_process');
             execSync(
-              'gh release upload ' + tag + ' ' + JSON.stringify(tmp) + '#/' + artifactName + ' --clobber',
+              'gh release upload ' +
+                tag +
+                ' ' +
+                JSON.stringify(tmp) +
+                '#' +
+                artifactName +
+                ' --clobber --repo ' +
+                process.env.GITHUB_REPOSITORY,
               {
                 stdio: 'inherit',
                 env: { ...process.env, GH_TOKEN: process.env.GH_TOKEN },
