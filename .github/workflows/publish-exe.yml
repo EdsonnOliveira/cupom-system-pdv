@@ -49,7 +49,7 @@ jobs:
             }
             const merged = Buffer.concat(chunks);
             const fs = await import('node:fs');
-            const tmp = '/tmp/cupom-publish-' + artifactName;
+            const tmp = '/tmp/' + artifactName;
             fs.writeFileSync(tmp, merged);
             const tag = 'v' + version;
             const { execSync } = await import('node:child_process');
@@ -58,8 +58,6 @@ jobs:
                 tag +
                 ' ' +
                 JSON.stringify(tmp) +
-                '#' +
-                artifactName +
                 ' --clobber --repo ' +
                 process.env.GITHUB_REPOSITORY,
               {
