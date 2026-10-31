@@ -2,6 +2,8 @@ name: Cupom publish exe
 on:
   repository_dispatch:
     types: [cupom_publish_exe]
+permissions:
+  contents: write
 jobs:
   upload:
     runs-on: ubuntu-latest
